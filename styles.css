@@ -1,0 +1,25 @@
+.blue_element {
+	background: #0099FF;
+	color: white;
+	font-weight: bold;
+	font-size: 14pt;
+	font-family: Arial;
+}
+
+.top_menu {
+	width: 100%;
+	height: 50px;
+}
+
+.label {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+}
+
+div {
+	float: left;
+	position: absolute;
+}
