@@ -1,2 +1,2 @@
 <?
-    echo 'Hello, world!';
+    require '/php/SearchString.php';
