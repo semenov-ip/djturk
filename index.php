@@ -1,16 +1,11 @@
 <html>
-    <head>
-        <title>test</title>
-    </head>
-    <body>
-        Допустим так
+	<head>
+		<title>djTurk</title>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
 <?
-<<<<<<< HEAD
-    require('/php/SearchString.php');
+	require 'src/php/TopMenu.php';
 ?>
-    после
-    </body>
+	</body>
 </html>
-=======
-	echo phpinfo();
->>>>>>> 4a7ccb0e526775cea55f3d26b3c12f1daff62c02
