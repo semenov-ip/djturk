@@ -31,8 +31,10 @@ class MixCloud(object):
         j = json.loads(self.toUtf8(r.text))
         for d in j['data']:
             tracklists.append(d['url'])
-        if ('next' in j['paging']):
-            tracklists.extend(self.search(artist, track, offset + limit))
+        if ('paging' in j):
+            if ('next' in j['paging']):
+                tracklists.extend(self.search(artist, track, offset + limit))
+        print (str(len(tracklists)) + ' tracklists were found')
         return tracklists
 
     def getTrackFromTracklist(self, url, artist, track):
@@ -47,19 +49,44 @@ class MixCloud(object):
                         return trackName
         return None
 
-    def doTest(self):
-        #r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
-        #r = requests.get('http://api.mixcloud.com/artist/aphex-twin/')
-        artist = 'armin van buuren'
-        track = 'imagine'
+    def getNeighboursFromTracklist(self, url, artist, track):
+        r = requests.get(self.wwwToApi(url))
+        cloudcast = json.loads(self.toUtf8(r.text))
+        result = []
+        if ('sections' in cloudcast):
+            sections = cloudcast['sections']
+            for (i, section) in enumerate(sections):
+                if ('track' in section):
+                    tracklistArtistName = section['track']['artist']['name']
+                    tracklistTrackName = section['track']['name']
+                    if (clean(tracklistArtistName) == clean(artist) and clean(tracklistTrackName) == clean(track)):
+                        if (i > 0):
+                            prev = sections[i - 1]
+                            name = prev['track']['artist']['name'] + " - " + prev['track']['name']
+                            result.append(name)
+                        if (i < len(sections) - 1):
+                            nxt = sections[i + 1]
+                            name = nxt['track']['artist']['name'] + " - " + nxt['track']['name']
+                            result.append(name)
+                        break
+        return result
+
+    def getCandidates(self, artist, track):
         tracklists = self.search(artist, track, 0)
         tracks = []
         total = 0
         for d in tracklists:
-            t = self.getTrackFromTracklist(d, artist, track)
-            if (t):
-                tracks.append(t)
+            t = self.getNeighboursFromTracklist(d, artist, track)
+            tracks.extend(t)
             total = total + 1
             if (total % 10 == 0):
                 print str(total) + ' playlists processed'
+        return tracks
+
+    def doTest(self):
+        #r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
+        #r = requests.get('http://api.mixcloud.com/artist/aphex-twin/')
+        artist = 'Lady Gaga'
+        track = 'Bad Romance'
+        tracks = self.getCandidates(artist, track)
         print tracks
