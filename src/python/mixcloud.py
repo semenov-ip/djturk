@@ -21,11 +21,16 @@ class MixCloud(object):
         q = string.join([artist, track]).replace(' ', '+')
         r = requests.get('http://api.mixcloud.com/search/?q=' + q +
                 '&type=cloudcast&limit=' + str(limit) + '&offset=' + str(offset))
-        #print self.toUtf8(r.text)
+        #print u.toUtf8(r.text)
         j = json.loads(u.toUtf8(r.text))
         for d in j['data']:
             url = d['url']
-            counts[url] = [d['listener_count'], d['play_count'], d['favorite_count']]
+            user = d['user']['url']
+            ur = requests.get(self.wwwToApi(user))
+            #print u.toUtf8(ur.text)
+            follower_count = json.loads(u.toUtf8(ur.text))['follower_count']
+            counts[url] = [d['listener_count'], d['play_count'], d['favorite_count'],
+                   d['comment_count'], follower_count]
         if ('paging' in j):
             if ('next' in j['paging']):
                 counts.update(self.search(artist, track, offset + limit))
@@ -84,7 +89,9 @@ class MixCloud(object):
         listenerCount = counts[0]
         playCount = counts[1]
         favoriteCount = counts[2]
-        result = listenerCount + playCount + favoriteCount
+        commentCount = counts[3]
+        followerCount = counts[4]
+        result = listenerCount + playCount + favoriteCount + commentCount + followerCount
         return result
 
     def doTest(self):
