@@ -1,2 +1,2 @@
 <?
-    require '/php/SearchString.php';
+	echo php_info();
