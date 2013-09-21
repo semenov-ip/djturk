@@ -8,6 +8,7 @@ Created on Sat Sep 21 00:26:42 2013
 import requests
 import json
 import string
+import sys
 import util as u
 
 class MixCloud(object):
@@ -101,3 +102,13 @@ class MixCloud(object):
         track = 'Bad Romance'
         tracks = self.getCandidates(artist, track)
         print tracks
+    
+def main(artist, track):
+    m = MixCloud()
+    c = m.getCandidates(artist, track)
+    print c
+
+if __name__ == '__main__':
+    print sys.argv
+    if (len(sys.argv) >= 3):
+        main(sys.argv[1], sys.argv[2])
