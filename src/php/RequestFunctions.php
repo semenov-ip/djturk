@@ -57,6 +57,7 @@ function findComposition($request)
 	$data = array(
 		'artist'	=> $requestArray[0],
 		'track'		=> $requestArray[1],
+		'next'		=> 1,
 	);
 
 	$getData = http_build_query($data);
@@ -64,11 +65,11 @@ function findComposition($request)
 		array(
 			'method' => 'GET',
 			'header' => 'Content-type: application/x-www-form-urlencoded',
-			'content' => $getData
+			'content' => $getData,
 		)
 	);
 	$context = stream_context_create($options);
-	$result = file_get_contents('http://djturk-back.herokuapp.com:8080', false, $context);
+	$result = file_get_contents('http://djturk-back.herokuapp.com', false, $context);
 	print_r($result);
 	return $result;
 }
