@@ -8,6 +8,7 @@ Created on Sat Sep 21 00:26:42 2013
 import requests
 import json
 import string
+import sys
 import util as u
 
 class MixCloud(object):
@@ -21,11 +22,16 @@ class MixCloud(object):
         q = string.join([artist, track]).replace(' ', '+')
         r = requests.get('http://api.mixcloud.com/search/?q=' + q +
                 '&type=cloudcast&limit=' + str(limit) + '&offset=' + str(offset))
-        #print self.toUtf8(r.text)
+        #print u.toUtf8(r.text)
         j = json.loads(u.toUtf8(r.text))
         for d in j['data']:
             url = d['url']
-            counts[url] = [d['listener_count'], d['play_count'], d['favorite_count']]
+            user = d['user']['url']
+            ur = requests.get(self.wwwToApi(user))
+            #print u.toUtf8(ur.text)
+            follower_count = json.loads(u.toUtf8(ur.text))['follower_count']
+            counts[url] = [d['listener_count'], d['play_count'], d['favorite_count'],
+                   d['comment_count'], follower_count]
         if ('paging' in j):
             if ('next' in j['paging']):
                 counts.update(self.search(artist, track, offset + limit))
@@ -84,7 +90,9 @@ class MixCloud(object):
         listenerCount = counts[0]
         playCount = counts[1]
         favoriteCount = counts[2]
-        result = listenerCount + playCount + favoriteCount
+        commentCount = counts[3]
+        followerCount = counts[4]
+        result = listenerCount + playCount + favoriteCount + commentCount + followerCount
         return result
 
     def doTest(self):
@@ -94,3 +102,13 @@ class MixCloud(object):
         track = 'Bad Romance'
         tracks = self.getCandidates(artist, track)
         print tracks
+    
+def main(artist, track):
+    m = MixCloud()
+    c = m.getCandidates(artist, track)
+    print c
+
+if __name__ == '__main__':
+    print sys.argv
+    if (len(sys.argv) >= 3):
+        main(sys.argv[1], sys.argv[2])
