@@ -1,8 +1,14 @@
 <div style="width: 50%; margin-left: 30px;">
 	<div style="width: 50%">
+		<?if(getPreviousComposition() != 'unknown'):?>
 		<div class="round_button" style='margin-left: 20px; margin-top: 100px;'>
 			<input type="image" name='prev' src="../../img/back.png">
 		</div>
+		<?else:?>
+			<div class="round_button" style='margin-left: 20px; margin-top: 100px;'>
+				<img src="../../img/back_inactive.png">
+			</div>
+		<?endif;?>
 		<div class="round_button" style='margin-left: 59px; margin-top: 100px;'>
 			<input type="image" name='play' src="../../img/play.png">
 		</div>
