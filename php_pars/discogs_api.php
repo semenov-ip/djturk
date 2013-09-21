@@ -51,7 +51,7 @@ class DiscogsApi {
 
 }
 
-$str = "Ken Ishii Innerelements";
+$str = "Ken Ishii Encoding";
 
 $obj = new DiscogsApi();
 $obj->parser($str);
