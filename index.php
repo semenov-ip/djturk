@@ -4,6 +4,7 @@ $clearPage = false;
 if(isset($_GET['request']))
 {
 	$output = findComposition($_GET['request']);
+
 	setSessionDataBasedOnTheSearchResult($output['author'], $output['composition'], $output['url']);
 }
 elseif(isset($_GET['prev']))

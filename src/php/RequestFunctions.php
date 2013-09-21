@@ -1,9 +1,10 @@
 <?
 function computeNextTrackData($artist, $track)
-{
+{//print_r($artist);
 	$data = array(
 		'artist'	=> $artist,
 		'track'		=> $track,
+		'next'		=> 1,
 	);
 
 	$getData = http_build_query($data);
@@ -11,53 +12,21 @@ function computeNextTrackData($artist, $track)
 	array(
 		'method' => 'GET',
 		'header' => 'Content-type: application/x-www-form-urlencoded',
-		'content' => $getData
+		'content' => $getData,
 	)
 	);
 	$context = stream_context_create($options);
-	$result = file_get_contents('http://djturk-back.herokuapp.com:8080', false, $context);
-	print_r($result);
-	return $result;
-}
-
-function computeNextAuthor($author)
-{
-	return 'unknown';
-}
-
-function computeNextComposition($composition)
-{
-	return 'unknown';
-}
-
-function computeNextUrl($url)
-{
-	return 'unknown';
-}
-
-function computeAnotherNextAuthor($author, $nextAuthor)
-{
-	return 'unknown';
-}
-
-function computeAnotherNextComposition($composition, $nextComposition)
-{
-	return 'unknown';
-}
-
-function computeAnotherNextUrl($url, $nextUrl)
-{
-	return 'unknown';
+	$result = file_get_contents('http://djturk-back.herokuapp.com?'.$getData, false, $context);
+	$resultArray = json_decode($result, true);
+	return $resultArray;
 }
 
 function findComposition($request)
 {
 	$requestArray = explode('-', $request);
-	//return passthru("python src/python/mixcloud.py '".$requestArray[0]."' '".$requestArray[1]."'");
 	$data = array(
 		'artist'	=> $requestArray[0],
 		'track'		=> $requestArray[1],
-		'next'		=> 1,
 	);
 
 	$getData = http_build_query($data);
@@ -69,7 +38,8 @@ function findComposition($request)
 		)
 	);
 	$context = stream_context_create($options);
-	$result = file_get_contents('http://djturk-back.herokuapp.com', false, $context);
-	print_r($result);
-	return $result;
+	$result = file_get_contents('http://djturk-back.herokuapp.com?'.$getData, false, $context);
+	$resultArray = json_decode($result, true);
+	print_r($resultArray);
+	return $resultArray;
 }
