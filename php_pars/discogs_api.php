@@ -62,12 +62,14 @@ class DiscogsApiParserTracklist {
     $this->counterTrackList = 0;
     foreach ($this->resultsSearchArray as $key => $value) {
       if($value['count'] > $this->counterTrackList){
-        $this->performer = $key;
-        $this->counterTrackList = $value['count'];
-        $urlNextTrackList = $value['resource_url'];
+        $content = json_decode(file_get_contents($value['resource_url']));
+        if(isset($content->tracklist)){
+          $this->performer = $key;
+          $this->counterTrackList = $value['count'];
+          $urlNextTrackList = $value['resource_url'];
+        }
       }
     }
-
     return $urlNextTrackList;
   }
 
@@ -86,9 +88,6 @@ class nextTrack extends DiscogsApiParserTracklist {
 
   function secondTrack(){
     $track = (count($this->arrayPlayList) == 0) ? $this->fiersTrack : $this->nextTrackPlayList;
-
-    echo $track."<br />";
-
     $this->draftingPlayList($track);
   }
 
@@ -100,13 +99,10 @@ class nextTrack extends DiscogsApiParserTracklist {
 
     if(count($this->arrayPlayList) <= 2){
       $currentTrackPlayList = $this->extractCurrentTrack($this->performer);
-
       $this->nextTrackPlayList = $this->extractNextTrack($arrayTrackList, $currentTrackPlayList);
 
       return $this->secondTrack();
     }
-
-    echo "<pre>"; print_r($this->arrayPlayList); echo "</pre>";
   }
 
   function extractCurrentTrack($previousTrack){
@@ -132,7 +128,7 @@ class nextTrack extends DiscogsApiParserTracklist {
 
 
 
-$fiersTrack = "Kala";
+$fiersTrack = "Written-By";
 
 $obj = new nextTrack($fiersTrack);
 $obj->secondTrack();
